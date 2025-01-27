@@ -1,6 +1,7 @@
 cfg_not_wasi! {
     use crate::net::{to_socket_addrs, ToSocketAddrs};
     use std::future::poll_fn;
+    #[cfg(not(target_os = "moturus"))]
     use std::time::Duration;
 }
 
@@ -266,6 +267,15 @@ impl TcpStream {
         #[cfg(target_os = "wasi")]
         {
             use std::os::wasi::io::{FromRawFd, IntoRawFd};
+            self.io
+                .into_inner()
+                .map(|io| io.into_raw_fd())
+                .map(|raw_fd| unsafe { std::net::TcpStream::from_raw_fd(raw_fd) })
+        }
+
+        #[cfg(target_os = "moturus")]
+        {
+            use std::os::fd::{FromRawFd, IntoRawFd};
             self.io
                 .into_inner()
                 .map(|io| io.into_raw_fd())
@@ -1155,6 +1165,7 @@ impl TcpStream {
         self.io.set_nodelay(nodelay)
     }
 
+    #[cfg(not(target_os = "moturus"))]
     cfg_not_wasi! {
         /// Reads the linger duration for this socket by getting the `SO_LINGER`
         /// option.

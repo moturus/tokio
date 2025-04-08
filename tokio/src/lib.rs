@@ -498,6 +498,9 @@ linux, on `aarch64`, `x86` and `x86_64`."
 #[doc(hidden)]
 pub mod macros;
 
+#[cfg(target_os = "moturus")]
+extern crate mio_moturus as mio;
+
 cfg_fs! {
     pub mod fs;
 }

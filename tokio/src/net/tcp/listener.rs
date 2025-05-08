@@ -297,6 +297,15 @@ impl TcpListener {
                 .map(|io| io.into_raw_fd())
                 .map(|raw_fd| unsafe { std::net::TcpListener::from_raw_fd(raw_fd) })
         }
+
+        #[cfg(target_os = "moturus")]
+        {
+            use std::os::fd::{FromRawFd, IntoRawFd};
+            self.io
+                .into_inner()
+                .map(|io| io.into_raw_fd())
+                .map(|raw_fd| unsafe { std::net::TcpListener::from_raw_fd(raw_fd) })
+        }
     }
 
     cfg_not_wasi! {

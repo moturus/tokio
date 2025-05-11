@@ -119,6 +119,7 @@ macro_rules! cfg_io_driver {
             #[cfg(any(
                 feature = "net",
                 all(unix, feature = "process"),
+                all(target_os = "moturus", feature = "process"),
                 all(unix, feature = "signal"),
             ))]
             #[cfg_attr(docsrs, doc(cfg(any(
@@ -137,6 +138,7 @@ macro_rules! cfg_io_driver_impl {
             #[cfg(any(
                 feature = "net",
                 all(unix, feature = "process"),
+                all(target_os = "moturus", feature = "process"),
                 all(unix, feature = "signal"),
             ))]
             $item

@@ -239,6 +239,10 @@ pub(crate) mod unix {
 #[cfg(windows)]
 mod imp;
 
+#[path = "moturus.rs"]
+#[cfg(target_os = "moturus")]
+mod imp;
+
 mod kill;
 
 use crate::io::{AsyncRead, AsyncWrite, ReadBuf};

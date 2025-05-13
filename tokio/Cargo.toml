@@ -130,7 +130,7 @@ features = [
 ]
 
 [target.'cfg(target_os = "moturus")'.dependencies]
-moto-rt = "0.2.12"
+moto-rt = "0.13"
 
 
 [dev-dependencies]

@@ -271,8 +271,18 @@ impl UdpSocket {
                 .map(|io| io.into_raw_socket())
                 .map(|raw_socket| unsafe { std::net::UdpSocket::from_raw_socket(raw_socket) })
         }
+
+        #[cfg(target_os = "motor")]
+        {
+            use std::os::fd::{FromRawFd, IntoRawFd};
+            self.io
+                .into_inner()
+                .map(IntoRawFd::into_raw_fd)
+                .map(|raw_fd| unsafe { std::net::UdpSocket::from_raw_fd(raw_fd) })
+        }
     }
 
+    #[cfg(not(target_os = "motor"))]
     fn as_socket(&self) -> socket2::SockRef<'_> {
         socket2::SockRef::from(self)
     }
@@ -1865,6 +1875,9 @@ impl UdpSocket {
 
     #[inline]
     fn peek_sender_inner(&self) -> io::Result<SocketAddr> {
+        #[cfg(target_os = "motor")]
+        todo!();
+        #[cfg(not(target_os = "motor"))]
         self.io.try_io(|| {
             self.as_socket()
                 .peek_sender()?
@@ -2014,7 +2027,8 @@ impl UdpSocket {
         target_os = "redox",
         target_os = "solaris",
         target_os = "illumos",
-        target_os = "haiku"
+        target_os = "haiku",
+        target_os = "motor"
     )))]
     #[cfg_attr(
         docsrs,
@@ -2023,7 +2037,8 @@ impl UdpSocket {
             target_os = "redox",
             target_os = "solaris",
             target_os = "illumos",
-            target_os = "haiku"
+            target_os = "haiku",
+            target_os = "motor"
         ))))
     )]
     pub fn tos(&self) -> io::Result<u32> {
@@ -2043,7 +2058,8 @@ impl UdpSocket {
         target_os = "redox",
         target_os = "solaris",
         target_os = "illumos",
-        target_os = "haiku"
+        target_os = "haiku",
+        target_os = "motor"
     )))]
     #[cfg_attr(
         docsrs,
@@ -2052,7 +2068,8 @@ impl UdpSocket {
             target_os = "redox",
             target_os = "solaris",
             target_os = "illumos",
-            target_os = "haiku"
+            target_os = "haiku",
+            target_os = "motor"
         ))))
     )]
     pub fn set_tos(&self, tos: u32) -> io::Result<()> {

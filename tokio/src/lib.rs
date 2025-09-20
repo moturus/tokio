@@ -20,6 +20,8 @@
 #![cfg_attr(loom, allow(dead_code, unreachable_pub))]
 #![cfg_attr(windows, allow(rustdoc::broken_intra_doc_links))]
 
+#![cfg_attr(target_os = "motor", feature(motor_ext))]
+
 //! A runtime for writing reliable network applications without compromising speed.
 //!
 //! Tokio is an event-driven, non-blocking I/O platform for writing asynchronous

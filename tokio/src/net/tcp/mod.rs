@@ -3,6 +3,7 @@
 pub(crate) mod listener;
 
 cfg_not_wasi! {
+    #[cfg(not(target_os = "motor"))]
     pub(crate) mod socket;
 }
 

@@ -140,7 +140,7 @@ features = [
 ]
 
 [target.'cfg(target_os = "motor")'.dependencies]
-moto-rt = "0.14"
+moto-rt = "0.15"
 
 
 [dev-dependencies]

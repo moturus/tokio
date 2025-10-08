@@ -62,7 +62,7 @@ pub(crate) fn build_child(mut child: StdChild) -> io::Result<SpawnedChild> {
         format!("handle://{}", child.sys_handle()).as_str(),
         moto_rt::fs::O_HANDLE_CHILD,
     )
-    .map_err(std::os::motor::map_motor_error)?;
+    .map_err(map_motor_error)?;
 
     let pipe = Pipe {
         fd: unsafe { File::from_raw_fd(child_fd) },
@@ -162,7 +162,7 @@ impl Source for Pipe {
             token.0 as u64,
             ints,
         )
-        .map_err(std::os::motor::map_motor_error)
+        .map_err(map_motor_error)
     }
 
     fn reregister(
@@ -184,12 +184,11 @@ impl Source for Pipe {
             token.0 as u64,
             ints,
         )
-        .map_err(std::os::motor::map_motor_error)
+        .map_err(map_motor_error)
     }
 
     fn deregister(&mut self, registry: &mio::Registry) -> io::Result<()> {
-        moto_rt::poll::del(registry.as_raw_fd(), self.fd.as_raw_fd())
-            .map_err(std::os::motor::map_motor_error)
+        moto_rt::poll::del(registry.as_raw_fd(), self.fd.as_raw_fd()).map_err(map_motor_error)
     }
 }
 
@@ -257,8 +256,7 @@ impl AsyncRead for ChildStdio {
 }
 
 fn set_nonblocking<T: AsRawFd>(fd: &mut T, nonblocking: bool) -> io::Result<()> {
-    moto_rt::net::set_nonblocking(fd.as_raw_fd(), nonblocking)
-        .map_err(std::os::motor::map_motor_error)?;
+    moto_rt::net::set_nonblocking(fd.as_raw_fd(), nonblocking).map_err(map_motor_error)?;
 
     Ok(())
 }
@@ -272,4 +270,8 @@ where
     set_nonblocking(&mut pipe, true)?;
 
     PollEvented::new(pipe).map(|inner| ChildStdio { inner })
+}
+
+fn map_motor_error(err: moto_rt::ErrorCode) -> std::io::Error {
+    std::io::Error::from_raw_os_error(err.into())
 }

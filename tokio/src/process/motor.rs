@@ -272,6 +272,6 @@ where
     PollEvented::new(pipe).map(|inner| ChildStdio { inner })
 }
 
-fn map_motor_error(err: moto_rt::ErrorCode) -> std::io::Error {
-    std::io::Error::from_raw_os_error(err.into())
+fn map_motor_error(err: moto_rt::Error) -> std::io::Error {
+    std::io::Error::from_raw_os_error((err as moto_rt::ErrorCode).into())
 }
